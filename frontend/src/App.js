@@ -555,7 +555,7 @@ const Jobs = () => {
 
 // Job Details Page with AI Application
 const JobDetails = () => {
-  const { id } = require('react-router-dom').useParams();
+  const { id } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showApplication, setShowApplication] = useState(false);
