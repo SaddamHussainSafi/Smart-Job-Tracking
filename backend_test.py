@@ -245,6 +245,8 @@ class JobTrackerAPITester:
         
         if not response or response.status_code != 403:
             print(f"  ❌ Expected 403 for job seeker creating job, got: {response.status_code if response else 'No response'}")
+            if response:
+                print(f"     Response: {response.text}")
             return False
         
         print("  ✅ Correctly blocked job creation by job seeker")
