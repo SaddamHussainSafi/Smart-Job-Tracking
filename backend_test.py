@@ -23,9 +23,12 @@ class JobTrackerAPITester:
         self.test_job_id = None
         self.test_application_id = None
         
+        # Generate unique test data with timestamp
+        timestamp = str(int(time.time()))
+        
         # Test data
         self.job_seeker_data = {
-            "email": "sarah.johnson@email.com",
+            "email": f"sarah.johnson.{timestamp}@email.com",
             "password": "SecurePass123!",
             "role": "job_seeker",
             "full_name": "Sarah Johnson",
@@ -36,7 +39,7 @@ class JobTrackerAPITester:
         }
         
         self.employer_data = {
-            "email": "hr@techcorp.com",
+            "email": f"hr.{timestamp}@techcorp.com",
             "password": "CompanyPass456!",
             "role": "employer",
             "full_name": "Tech Corp HR",
