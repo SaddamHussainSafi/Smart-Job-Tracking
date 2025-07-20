@@ -7,6 +7,8 @@ Tests all authentication, job management, AI document generation, and applicatio
 import requests
 import json
 import sys
+import time
+import random
 from typing import Dict, Any, Optional
 
 # Backend URL from environment
