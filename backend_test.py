@@ -68,17 +68,23 @@ class JobTrackerAPITester:
         
         try:
             if method.upper() == "GET":
-                response = self.session.get(url, headers=headers, params=params, timeout=10)
+                response = self.session.get(url, headers=headers, params=params, timeout=30)
             elif method.upper() == "POST":
-                response = self.session.post(url, headers=headers, json=data, timeout=10)
+                response = self.session.post(url, headers=headers, json=data, timeout=30)
             elif method.upper() == "PUT":
-                response = self.session.put(url, headers=headers, json=data, timeout=10)
+                response = self.session.put(url, headers=headers, json=data, timeout=30)
             elif method.upper() == "DELETE":
-                response = self.session.delete(url, headers=headers, timeout=10)
+                response = self.session.delete(url, headers=headers, timeout=30)
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
             
             return response
+        except requests.exceptions.Timeout as e:
+            print(f"❌ Request timeout: {e}")
+            return None
+        except requests.exceptions.ConnectionError as e:
+            print(f"❌ Connection error: {e}")
+            return None
         except requests.exceptions.RequestException as e:
             print(f"❌ Request failed: {e}")
             return None
