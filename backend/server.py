@@ -331,8 +331,15 @@ async def get_my_applications(current_user: User = Depends(get_current_user)):
     for app in applications:
         job_dict = await db.jobs.find_one({"id": app["job_id"]})
         if job_dict:
+            application_dict = Application(**app)
             result.append({
-                **app,
+                "id": application_dict.id,
+                "job_id": application_dict.job_id,
+                "job_seeker_id": application_dict.job_seeker_id,
+                "resume_content": application_dict.resume_content,
+                "cover_letter_content": application_dict.cover_letter_content,
+                "applied_at": application_dict.applied_at,
+                "status": application_dict.status,
                 "job": Job(**job_dict)
             })
     
