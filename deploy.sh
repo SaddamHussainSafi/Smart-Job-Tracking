@@ -16,7 +16,7 @@ fi
 
 # Install Python dependencies
 echo "📦 Installing Python dependencies..."
-pip3 install -r requirements.txt
+pip3 install --user -r requirements.txt || pip install --break-system-packages -r requirements.txt
 
 # Navigate to Next.js frontend directory
 cd next-frontend
@@ -26,6 +26,10 @@ if [ ! -f "package.json" ]; then
     echo "❌ package.json not found in next-frontend directory"
     exit 1
 fi
+
+# Clean previous builds
+echo "🧹 Cleaning previous builds..."
+rm -rf node_modules package-lock.json .next out
 
 # Install Node.js dependencies
 echo "📦 Installing Node.js dependencies..."
