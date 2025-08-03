@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import Navigation from '../../components/Navigation'
+import { useAuth } from '../../context/AuthContext'
 import { jobsAPI } from '../../utils/api'
 
 export default function Jobs() {
+  const { user, isAuthenticated } = useAuth();
   const [jobs, setJobs] = useState([])
+  const [dynamicJobs, setDynamicJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
     search: '',
@@ -14,21 +17,29 @@ export default function Jobs() {
   })
 
   useEffect(() => {
-    fetchJobs()
-  }, [])
+    const fetchAllJobs = async () => {
+      try {
+        // Fetch manually posted jobs
+        const manualJobsResponse = await jobsAPI.getAll()
+        setJobs(manualJobsResponse.data.map(job => ({ ...job, source: 'manual' })))
 
-  const fetchJobs = async () => {
-    try {
-      const response = await jobsAPI.getAll()
-      setJobs(response.data)
-    } catch (error) {
-      console.error('Failed to fetch jobs:', error)
-    } finally {
-      setLoading(false)
+        // Fetch dynamic jobs if user is authenticated and has interests
+        if (isAuthenticated && user?.skills?.length > 0) {
+          const interests = user.skills.join(',');
+          const dynamicJobsResponse = await jobsAPI.getDynamic(interests);
+          setDynamicJobs(dynamicJobsResponse.data.map(job => ({ ...job, isDynamic: true })));
+        }
+      } catch (error) {
+        console.error('Failed to fetch jobs:', error)
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    fetchAllJobs()
+  }, [isAuthenticated, user])
 
-  const filteredJobs = jobs.filter(job => {
+  const allJobs = [...dynamicJobs, ...jobs];
+  const filteredJobs = allJobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(filters.search.toLowerCase()) ||
                          job.company.toLowerCase().includes(filters.search.toLowerCase())
     const matchesLocation = !filters.location || job.location.toLowerCase().includes(filters.location.toLowerCase())
@@ -123,7 +134,7 @@ export default function Jobs() {
           <div>
             <div className="mb-6">
               <p className="text-gray-600">
-                Showing {filteredJobs.length} of {jobs.length} jobs
+                Showing {filteredJobs.length} of {allJobs.length} jobs
               </p>
             </div>
 
@@ -138,15 +149,18 @@ export default function Jobs() {
             ) : (
               <div className="grid gap-6">
                 {filteredJobs.map((job) => (
-                  <div key={job.id} className="card hover:shadow-lg transition-shadow">
+                  <div key={job.id} className={`card hover:shadow-lg transition-shadow ${job.isDynamic ? 'border-l-4 border-green-500' : ''}`}>
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {job.isDynamic && (
+                            <span className="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Recommended for you</span>
+                        )}
+                        <h3 className="text-xl font-bold text-gray-900 mt-2 mb-2">
                           <Link href={`/jobs/${job.id}`} className="hover:text-blue-600">
                             {job.title}
                           </Link>
                         </h3>
-                        <p className="text-gray-600 mb-2">{job.company}</p>
+                        <p className="text-gray-600 mb-2">{job.company} {job.isDynamic && <span className="text-sm text-gray-500">(From LinkedIn)</span>}</p>
                         <p className="text-gray-500 mb-4 flex items-center">
                           <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />

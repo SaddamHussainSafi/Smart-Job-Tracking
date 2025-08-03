@@ -23,7 +23,11 @@ export default function Register() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [skillInput, setSkillInput] = useState('')
+  const interestsList = [
+    'Frontend Development', 'Backend Development', 'Full-Stack Development', 'DevOps',
+    'Data Science', 'Machine Learning', 'AI Engineering', 'UI/UX Design',
+    'Product Management', 'Cybersecurity', 'Mobile Development', 'Game Development'
+  ];
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -38,22 +42,26 @@ export default function Register() {
     })
   }
 
-  const addSkill = () => {
-    if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
-      setFormData({
-        ...formData,
-        skills: [...formData.skills, skillInput.trim()]
-      })
-      setSkillInput('')
-    }
-  }
+  const handleInterestChange = (interest) => {
+    const newSkills = formData.skills.includes(interest)
+      ? formData.skills.filter(skill => skill !== interest)
+            : [...formData.skills, interest];
 
-  const removeSkill = (skillToRemove) => {
+    if (newSkills.length > 4) {
+        setError('You can select a maximum of 4 interests.');
+        // Optionally, prevent adding more than 4
+        return;
+    } else {
+        setError('');
+    }
+
+
     setFormData({
       ...formData,
-      skills: formData.skills.filter(skill => skill !== skillToRemove)
-    })
-  }
+      skills: newSkills
+    });
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -228,40 +236,24 @@ export default function Register() {
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Skills
+                      Your Interests (Choose up to 4)
                     </label>
-                    <div className="flex space-x-2 mb-2">
-                      <input
-                        type="text"
-                        className="input-field flex-1"
-                        placeholder="Add a skill"
-                        value={skillInput}
-                        onChange={(e) => setSkillInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                      />
-                      <button
-                        type="button"
-                        onClick={addSkill}
-                        className="btn-secondary"
-                      >
-                        Add
-                      </button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {formData.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center"
-                        >
-                          {skill}
-                          <button
-                            type="button"
-                            onClick={() => removeSkill(skill)}
-                            className="ml-2 text-blue-600 hover:text-blue-800"
-                          >
-                            ×
-                          </button>
-                        </span>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {interestsList.map(interest => (
+                        <div key={interest} className="flex items-center">
+                          <input
+                            id={interest}
+                            name="skills"
+                            type="checkbox"
+                            value={interest}
+                            checked={formData.skills.includes(interest)}
+                            onChange={() => handleInterestChange(interest)}
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <label htmlFor={interest} className="ml-3 text-sm text-gray-700">
+                            {interest}
+                          </label>
+                        </div>
                       ))}
                     </div>
                   </div>
