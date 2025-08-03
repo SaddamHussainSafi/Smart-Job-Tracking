@@ -32,6 +32,7 @@ export const jobsAPI = {
   getAll: () => api.get('/jobs'),
   getById: (id) => api.get(`/jobs/${id}`),
   create: (jobData) => api.post('/jobs', jobData),
+  getDynamic: (interests) => api.get(`/jobs/dynamic?interests=${interests}`),
 }
 
 export const applicationsAPI = {

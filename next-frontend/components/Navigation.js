@@ -33,6 +33,11 @@ export default function Navigation() {
             <Link href="/jobs" className="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-lg transition-colors">
               Browse Jobs
             </Link>
+            {user && user.role === 'employer' && (
+                <Link href="/jobs/post" className="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-lg transition-colors">
+                    Post a Job
+                </Link>
+            )}
             <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-lg transition-colors">
               Contact
             </Link>
@@ -87,6 +92,11 @@ export default function Navigation() {
               <Link href="/jobs" className="block text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-lg transition-colors">
                 Browse Jobs
               </Link>
+              {user && user.role === 'employer' && (
+                  <Link href="/jobs/post" className="block text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-lg transition-colors">
+                      Post a Job
+                  </Link>
+              )}
               <Link href="/contact" className="block text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-lg transition-colors">
                 Contact
               </Link>

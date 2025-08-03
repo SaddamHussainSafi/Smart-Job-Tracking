@@ -359,5 +359,31 @@ Sincerely,
             
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-    
+
+    # Simulated dynamic jobs from LinkedIn
+    sample_dynamic_jobs = [
+        {'id': 'dyn-1', 'title': 'Senior Frontend Developer', 'company': 'Innovate Inc.', 'location': 'Remote', 'description': '...', 'source': 'LinkedIn', 'tags': ['Frontend Development', 'React']},
+        {'id': 'dyn-2', 'title': 'Backend Python Engineer', 'company': 'DataCorp', 'location': 'New York, NY', 'description': '...', 'source': 'LinkedIn', 'tags': ['Backend Development', 'Python', 'API']},
+        {'id': 'dyn-3', 'title': 'Full-Stack Developer', 'company': 'WebWeavers', 'location': 'San Francisco, CA', 'description': '...', 'source': 'LinkedIn', 'tags': ['Full-Stack Development', 'Node.js', 'React']},
+        {'id': 'dyn-4', 'title': 'DevOps Engineer', 'company': 'CloudNine', 'location': 'Austin, TX', 'description': '...', 'source': 'LinkedIn', 'tags': ['DevOps', 'AWS', 'Kubernetes']},
+        {'id': 'dyn-5', 'title': 'Data Scientist', 'company': 'Numerix', 'location': 'Boston, MA', 'description': '...', 'source': 'LinkedIn', 'tags': ['Data Science', 'Python', 'Machine Learning']},
+        {'id': 'dyn-6', 'title': 'Machine Learning Engineer', 'company': 'AI Solutions', 'location': 'Remote', 'description': '...', 'source': 'LinkedIn', 'tags': ['Machine Learning', 'TensorFlow', 'PyTorch']},
+        {'id': 'dyn-7', 'title': 'UI/UX Designer', 'company': 'Creative Minds', 'location': 'Los Angeles, CA', 'description': '...', 'source': 'LinkedIn', 'tags': ['UI/UX Design', 'Figma', 'Adobe XD']},
+        {'id': 'dyn-8', 'title': 'Product Manager', 'company': 'FeatureFlow', 'location': 'Seattle, WA', 'description': '...', 'source': 'LinkedIn', 'tags': ['Product Management', 'Agile']},
+    ]
+
+    @app.route('/api/jobs/dynamic', methods=['GET'])
+    @require_auth
+    def get_dynamic_jobs():
+        interests = request.args.get('interests', '').split(',')
+        if not interests or interests == ['']:
+            return jsonify([])
+
+        matching_jobs = []
+        for job in sample_dynamic_jobs:
+            if any(interest in job['tags'] for interest in interests):
+                matching_jobs.append(job)
+
+        return jsonify(matching_jobs)
+
     return app
